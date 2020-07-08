@@ -36,7 +36,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh "npm install leaflet"
+        sh "npm install jcognos"
       }
     }
   }
