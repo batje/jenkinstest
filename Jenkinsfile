@@ -36,7 +36,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh "npm install jcognos"
+        sh "npm install babel"
       }
     }
   }
