@@ -9,8 +9,27 @@ pipeline {
     stage('Prepare') {
       steps {
         script {
-          if (env.BRANCH_NAME == "master") {
-            echo "We are in production, lets not do anything yet"
+          /**
+           *
+           This should probably be a function in a library
+           We are going to figure out what the current context is
+
+           The rules are as follows:
+
+           If we are on master *and* this is a tag build (meaning, we just
+           pushed a tag), then we are releasing to PROD
+
+           If we are on master, and this is not a tag build, we are on INT
+
+           If we are on any other branch than master, this is TEST
+
+           We are never on DEV, that is where we connect with our Talend Studio
+
+          */
+
+
+          if ()(env.BRANCH_NAME == "master") && (env.TAG_NAME)) {
+
             secretFileName = "MY_SECRET_FILE"
             currentBuild.displayName =  currentBuild.displayName + " PROD"
           } else if (env.BRANCH_NAME == "int") {
@@ -31,10 +50,30 @@ pipeline {
               currentBuild.displayName = "On ${env.NODE_NAME}"
             }
           }
+          def data = [
+            url: "http",
+            namespace: "emea.corpdir.net",
+            user: "REBATTE",
+            password: "tralala",
+            debug: false
+          ]
+
+          //two alternatives to write
+
+          //native pipeline step:
+          writeJSON(file: 'CustomSettings.json', json: data)          
         }
       }
     }
     stage('Build') {
+      agent {
+        label "cognos && ${Context}"
+      }
+      when {
+
+      }
+
+
       steps {
         sh "npm install babel"
       }
